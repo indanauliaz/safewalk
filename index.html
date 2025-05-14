@@ -3,11 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <title>Safewalk</title>
-
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css" />
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     #map {
       height: 300px;
@@ -16,11 +13,11 @@
     }
   </style>
 </head>
-
 <body>
   <div class="container">
     <h1>Safewalk</h1>
     <p>Aplikasi teman jalan yang aman dan nyaman</p>
+    <input type="text" id="alamatTujuan" placeholder="Masukkan alamat tujuan" />
     <button id="startBtn">Mulai Safewalk</button>
     <div id="info"></div>
   </div>
