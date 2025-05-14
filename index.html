@@ -4,6 +4,19 @@
   <meta charset="UTF-8">
   <title>Safewalk</title>
   <link rel="stylesheet" href="style.css">
+  
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+  <style>
+    #map {
+      height: 300px;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -11,6 +24,12 @@
     <p>Aplikasi teman jalan yang aman dan nyaman</p>
     <button id="startBtn">Mulai Safewalk</button>
   </div>
-  <script src="script.js" defer></script>
+
+  <!-- Map container -->
+  <div id="map"></div>
+
+  <!-- Leaflet JS dan script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
