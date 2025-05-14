@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Safewalk</title>
-  <link rel="stylesheet" href="style.css">
-  
+
   <!-- Leaflet CSS -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   />
+
+  <link rel="stylesheet" href="style.css" />
+
   <style>
     #map {
       height: 300px;
@@ -18,6 +20,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>Safewalk</h1>
@@ -25,11 +28,10 @@
     <button id="startBtn">Mulai Safewalk</button>
   </div>
 
-  <!-- Map container -->
   <div id="map"></div>
 
-  <!-- Leaflet JS dan script -->
+  <!-- Leaflet JS dan script.js di bagian bawah -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 </html>
