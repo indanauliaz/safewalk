@@ -1,6 +1,6 @@
 document.getElementById('startBtn').addEventListener('click', function () {
   const apiKey = '5b3ce3597851110001cf6248947756bf8fdb49fba7ecaed05516ff31';
-  const tujuan = [107.6108, -6.8915]; // Contoh: ITB Bandung
+  const tujuan = [107.6108, -6.8915]; // Tujuan (lon, lat)
 
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(
@@ -8,33 +8,31 @@ document.getElementById('startBtn').addEventListener('click', function () {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
 
-        console.log("Lokasi pengguna:", lat, lon);
-        console.log("Lokasi tujuan:", tujuan[1], tujuan[0]);
+        console.log("Lokasi akurat:", lat, lon); // Debug
 
-        const lokasiDiv = document.createElement('div');
+        // Tampilkan lokasi
+        const lokasiDiv = document.getElementById('info');
         lokasiDiv.innerHTML = `
           <h3>📍 Lokasi Kamu</h3>
           <p>Latitude: ${lat}</p>
           <p>Longitude: ${lon}</p>
         `;
-        document.getElementById('info').innerHTML = '';
-        document.getElementById('info').appendChild(lokasiDiv);
 
         // Tampilkan peta
-        const map = L.map('map').setView([lat, lon], 15);
-
+        const map = L.map('map').setView([lat, lon], 16);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        // Marker posisi pengguna
+        // Marker lokasi kamu
         L.marker([lat, lon]).addTo(map)
           .bindPopup('Kamu di sini 😎')
           .openPopup();
 
         // Marker tujuan
         L.marker([tujuan[1], tujuan[0]]).addTo(map)
-          .bindPopup('Tujuan 🎯');
+          .bindPopup('Tujuan 🎯')
+          .openPopup();
 
         try {
           const response = await fetch('https://api.openrouteservice.org/v2/directions/foot-walking', {
@@ -45,15 +43,16 @@ document.getElementById('startBtn').addEventListener('click', function () {
             },
             body: JSON.stringify({
               coordinates: [
-                [lon, lat],
-                tujuan
+                [lon, lat], // Lokasi asal (lon, lat)
+                tujuan      // Tujuan (lon, lat)
               ]
             })
           });
 
           const data = await response.json();
-          const waktu = data.routes[0].summary.duration / 60; // menit
+          const waktu = data.routes[0].summary.duration / 60;
 
+          // Tampilkan estimasi waktu
           const waktuDiv = document.createElement('div');
           waktuDiv.innerHTML = `<p>🕒 Estimasi waktu jalan kaki: ${waktu.toFixed(1)} menit</p>`;
           document.getElementById('info').appendChild(waktuDiv);
