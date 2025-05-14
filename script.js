@@ -1,6 +1,6 @@
 document.getElementById('startBtn').addEventListener('click', function () {
   const apiKey = '5b3ce3597851110001cf6248947756bf8fdb49fba7ecaed05516ff31';
-  const tujuan = [107.6108, -6.8915]; // Tujuan (lon, lat)
+  const tujuan = [107.6108, -6.8915]; // ITB (format: [lon, lat])
 
   if ('geolocation' in navigator) {
     navigator.geolocation.getCurrentPosition(
@@ -8,31 +8,24 @@ document.getElementById('startBtn').addEventListener('click', function () {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
 
-        console.log("Lokasi akurat:", lat, lon); // Debug
+        console.log("Lokasi kamu:", lat, lon);
 
-        // Tampilkan lokasi
-        const lokasiDiv = document.getElementById('info');
+        const lokasiDiv = document.createElement('div');
         lokasiDiv.innerHTML = `
           <h3>📍 Lokasi Kamu</h3>
           <p>Latitude: ${lat}</p>
           <p>Longitude: ${lon}</p>
         `;
+        document.getElementById('info').appendChild(lokasiDiv);
 
-        // Tampilkan peta
         const map = L.map('map').setView([lat, lon], 16);
+
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        // Marker lokasi kamu
-        L.marker([lat, lon]).addTo(map)
-          .bindPopup('Kamu di sini 😎')
-          .openPopup();
-
-        // Marker tujuan
-        L.marker([tujuan[1], tujuan[0]]).addTo(map)
-          .bindPopup('Tujuan 🎯')
-          .openPopup();
+        L.marker([lat, lon]).addTo(map).bindPopup('Kamu di sini 😎').openPopup();
+        L.marker([tujuan[1], tujuan[0]]).addTo(map).bindPopup('Tujuan 🎯');
 
         try {
           const response = await fetch('https://api.openrouteservice.org/v2/directions/foot-walking', {
@@ -43,31 +36,40 @@ document.getElementById('startBtn').addEventListener('click', function () {
             },
             body: JSON.stringify({
               coordinates: [
-                [lon, lat], // Lokasi asal (lon, lat)
-                tujuan      // Tujuan (lon, lat)
+                [lon, lat],
+                tujuan
               ]
             })
           });
 
+          if (!response.ok) {
+            const err = await response.json();
+            console.error("API Error:", err);
+            throw new Error(err.error || "Gagal mengambil rute");
+          }
+
           const data = await response.json();
           const waktu = data.routes[0].summary.duration / 60;
 
-          // Tampilkan estimasi waktu
           const waktuDiv = document.createElement('div');
           waktuDiv.innerHTML = `<p>🕒 Estimasi waktu jalan kaki: ${waktu.toFixed(1)} menit</p>`;
           document.getElementById('info').appendChild(waktuDiv);
 
-          // Gambar rute
           const routeCoords = data.routes[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
           const routeLine = L.polyline(routeCoords, { color: 'blue' }).addTo(map);
           map.fitBounds(routeLine.getBounds());
 
         } catch (error) {
-          alert('Gagal menghitung rute: ' + error.message);
+          alert("Gagal menghitung rute: " + error.message);
         }
       },
       (error) => {
         alert("Gagal mendapatkan lokasi: " + error.message);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
       }
     );
   } else {
