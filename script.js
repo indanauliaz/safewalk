@@ -16,11 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <p><i>Klik lokasi tujuan di peta</i></p>
           `;
 
+          // TAMPILKAN map (yang awalnya display: none)
+          document.getElementById('map').style.display = 'block';
+
+          // Buang map lama kalau ada
           if (window.map) {
             window.map.remove();
           }
 
-          // Buat peta langsung tanpa delay
           const map = L.map('map').setView([lat, lon], 16);
           window.map = map;
 
