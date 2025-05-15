@@ -16,10 +16,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <p><i>Klik lokasi tujuan di peta</i></p>
           `;
 
-          // TAMPILKAN map (yang awalnya display: none)
-          document.getElementById('map').style.display = 'block';
+          const mapContainer = document.getElementById('map');
+          if (!mapContainer) {
+            alert('Map container tidak ditemukan');
+            return;
+          }
 
-          // Buang map lama kalau ada
+          // Bersihin map sebelumnya (kalau ada)
           if (window.map) {
             window.map.remove();
           }
