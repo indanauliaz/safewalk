@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+  console.log("Script loaded");
+
   document.getElementById('startBtn').addEventListener('click', function () {
     const apiKey = '5b3ce3597851110001cf6248947756bf8fdb49fba7ecaed05516ff31';
 
@@ -18,13 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
           document.getElementById('info').innerHTML = '';
           document.getElementById('info').appendChild(lokasiDiv);
 
-          // CEK apakah map udah ada, jika ada hapus dulu
           if (window.map) {
             window.map.remove();
           }
 
           const map = L.map('map').setView([lat, lon], 16);
-          window.map = map; // Simpan global biar bisa direuse
+          window.map = map;
 
           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors'
