@@ -6,10 +6,6 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="style.css" />
-
-  <style>
-    /* #map dipindah ke style.css */
-  </style>
 </head>
 <body>
   <div class="container">
@@ -17,10 +13,10 @@
     <p>Aplikasi teman jalan yang aman dan nyaman</p>
     <button id="startBtn">Mulai Safewalk</button>
     <div id="info"></div>
-  </div>
 
-  <!-- Pastikan ini di luar .container -->
-  <div id="map"></div>
+    <!-- Map DIPINDAH ke dalam container dan disembunyikan dulu -->
+    <div id="map" style="display: none;"></div>
+  </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="script.js" defer></script>
