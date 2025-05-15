@@ -16,71 +16,71 @@ document.addEventListener('DOMContentLoaded', () => {
             <p><i>Klik lokasi tujuan di peta</i></p>
           `;
 
+          // Hapus map sebelumnya jika ada
           if (window.map) {
             window.map.remove();
+            document.getElementById('map').innerHTML = ''; // Reset kontainer
           }
 
-          // Delay untuk memastikan DOM map siap
-          setTimeout(() => {
-            const map = L.map('map').setView([lat, lon], 16);
-            window.map = map;
+          // Pastikan map container sudah ada di DOM
+          const map = L.map('map').setView([lat, lon], 16);
+          window.map = map;
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(map);
 
-            L.marker([lat, lon]).addTo(map)
-              .bindPopup('Kamu di sini 😎')
+          L.marker([lat, lon]).addTo(map)
+            .bindPopup('Kamu di sini 😎')
+            .openPopup();
+
+          let tujuanMarker;
+          let routeLine;
+
+          map.on('click', async function (e) {
+            const tujuanLat = e.latlng.lat;
+            const tujuanLon = e.latlng.lng;
+
+            if (tujuanMarker) map.removeLayer(tujuanMarker);
+            if (routeLine) map.removeLayer(routeLine);
+
+            tujuanMarker = L.marker([tujuanLat, tujuanLon]).addTo(map)
+              .bindPopup('Tujuan 🎯')
               .openPopup();
 
-            let tujuanMarker;
-            let routeLine;
+            try {
+              const response = await fetch('https://api.openrouteservice.org/v2/directions/foot-walking', {
+                method: 'POST',
+                headers: {
+                  'Authorization': apiKey,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  coordinates: [
+                    [lon, lat],
+                    [tujuanLon, tujuanLat]
+                  ]
+                })
+              });
 
-            map.on('click', async function (e) {
-              const tujuanLat = e.latlng.lat;
-              const tujuanLon = e.latlng.lng;
+              const data = await response.json();
 
-              if (tujuanMarker) map.removeLayer(tujuanMarker);
-              if (routeLine) map.removeLayer(routeLine);
-
-              tujuanMarker = L.marker([tujuanLat, tujuanLon]).addTo(map)
-                .bindPopup('Tujuan 🎯')
-                .openPopup();
-
-              try {
-                const response = await fetch('https://api.openrouteservice.org/v2/directions/foot-walking', {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': apiKey,
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    coordinates: [
-                      [lon, lat],
-                      [tujuanLon, tujuanLat]
-                    ]
-                  })
-                });
-
-                const data = await response.json();
-
-                if (!data.routes || !data.routes[0]) {
-                  throw new Error('Route tidak ditemukan');
-                }
-
-                const waktu = data.routes[0].summary.duration / 60;
-                const waktuDiv = document.createElement('div');
-                waktuDiv.innerHTML = `<p>🕒 Estimasi waktu jalan kaki: ${waktu.toFixed(1)} menit</p>`;
-                infoDiv.appendChild(waktuDiv);
-
-                const routeCoords = data.routes[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
-                routeLine = L.polyline(routeCoords, { color: 'blue' }).addTo(map);
-                map.fitBounds(routeLine.getBounds());
-              } catch (error) {
-                alert('Gagal menghitung rute: ' + error.message);
+              if (!data.routes || !data.routes[0]) {
+                throw new Error('Route tidak ditemukan');
               }
-            });
-          }, 500);
+
+              const waktu = data.routes[0].summary.duration / 60;
+              const waktuDiv = document.createElement('div');
+              waktuDiv.innerHTML = `<p>🕒 Estimasi waktu jalan kaki: ${waktu.toFixed(1)} menit</p>`;
+              infoDiv.appendChild(waktuDiv);
+
+              const routeCoords = data.routes[0].geometry.coordinates.map(coord => [coord[1], coord[0]]);
+              routeLine = L.polyline(routeCoords, { color: 'blue' }).addTo(map);
+              map.fitBounds(routeLine.getBounds());
+            } catch (error) {
+              alert('Gagal menghitung rute: ' + error.message);
+            }
+          });
         },
         (error) => {
           alert("Gagal mendapatkan lokasi: " + error.message);
