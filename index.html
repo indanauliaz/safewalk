@@ -2,61 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Safewalk</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <title>Safewalk Estimasi Waktu</title>
   <style>
-    #map {
-      height: 400px;
-      margin-top: 20px;
-      border-radius: 10px;
-      display: none; /* sembunyi dulu */
-    }
-    .container {
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
       max-width: 400px;
       margin: auto;
-      text-align: center;
-      padding: 2rem;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      font-family: sans-serif;
     }
-    button {
-      padding: 10px 20px;
-      border: none;
-      background: #4CAF50;
-      color: white;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    input {
+    input, button {
       padding: 10px;
-      margin-top: 10px;
-      width: 100%;
       font-size: 16px;
+      width: 100%;
+      margin-bottom: 1rem;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
+    button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
     #info {
-      margin-top: 15px;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Safewalk</h1>
-    <p>Aplikasi teman jalan yang aman dan nyaman</p>
-    <input type="time" id="jamJalan" />
-    <button id="startBtn">Mulai Safewalk</button>
-    <div id="info"></div>
-  </div>
 
-  <div id="map"></div>
+  <h1>Safewalk</h1>
+  <label for="jam">Masukkan jam keberangkatan:</label>
+  <input type="time" id="jam" />
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="script.js" defer></script>
+  <button id="startBtn">Mulai Hitung Estimasi Waktu</button>
+
+  <div id="info"></div>
+
+  <script src="script.js"></script>
 </body>
 </html>
