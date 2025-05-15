@@ -1,10 +1,7 @@
 let map;
 let markerUser;
 let markerTujuan;
-let markerEksplorasi;
 let routeLine;
-
-const ITB_COORDS = [107.6108, -6.8915]; // [lon, lat]
 
 document.getElementById('startBtn').addEventListener('click', () => {
   const jamInput = document.getElementById('jamJalan').value;
@@ -13,57 +10,56 @@ document.getElementById('startBtn').addEventListener('click', () => {
     return;
   }
 
+  // Sembunyikan tombol dan input jam, tampilkan peta
   document.getElementById('startBtn').style.display = 'none';
   document.getElementById('jamJalan').style.display = 'none';
-  document.getElementById('map').style.display = 'block';
+  const mapDiv = document.getElementById('map');
+  mapDiv.style.display = 'block';
 
   if (!('geolocation' in navigator)) {
     alert('Geolocation tidak didukung browser ini.');
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(async (pos) => {
+  navigator.geolocation.getCurrentPosition((pos) => {
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
 
+    // Tampilkan peta
     map = L.map('map').setView([lat, lon], 16);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
+    // Marker lokasi user
     markerUser = L.marker([lat, lon]).addTo(map).bindPopup('Kamu di sini 😎').openPopup();
 
-    // Marker ITB (fixed)
-    markerTujuan = L.marker([ITB_COORDS[1], ITB_COORDS[0]])
-      .addTo(map)
-      .bindPopup('Tujuan')
-      .openPopup();
-
+    // Info lokasi user & jam jalan
     const infoDiv = document.getElementById('info');
     infoDiv.innerHTML = `
       <h3>📍 Lokasi Kamu</h3>
       <p>Latitude: ${lat.toFixed(5)}</p>
       <p>Longitude: ${lon.toFixed(5)}</p>
       <p>Jam jalan: <b>${jamInput}</b></p>
-      <p>Klik di peta untuk menentukan tujuan</p>
+      <p>Klik di peta untuk pilih tujuan jalan kaki</p>
     `;
 
-    // Klik di peta → marker eksplorasi (tidak mengubah rute)
-    map.on('click', (e) => {
-      const eksplorLat = e.latlng.lat;
-      const eksplorLon = e.latlng.lng;
+    // Event klik peta untuk set tujuan
+    map.on('click', async function(e) {
+      const tujuanLat = e.latlng.lat;
+      const tujuanLon = e.latlng.lng;
 
-      if (markerEksplorasi) {
-        map.removeLayer(markerEksplorasi);
+      // Hapus marker tujuan lama kalau ada
+      if (markerTujuan) {
+        map.removeLayer(markerTujuan);
       }
 
-      markerEksplorasi = L.marker([eksplorLat, eksplorLon])
-        .addTo(map)
-        .bindPopup(`Titik eksplorasi 🧭<br>Lat: ${eksplorLat.toFixed(5)}<br>Lon: ${eksplorLon.toFixed(5)}`)
-        .openPopup();
-    });
+      // Tambah marker tujuan
+      markerTujuan = L.marker([tujuanLat, tujuanLon]).addTo(map).bindPopup('Tujuan 🎯').openPopup();
 
-    await hitungRute([lon, lat], ITB_COORDS, jamInput);
+      // Hitung dan tampilkan rute
+      await hitungRute([lon, lat], [tujuanLon, tujuanLat], jamInput);
+    });
 
   }, (err) => {
     alert('Gagal mendapatkan lokasi: ' + err.message);
@@ -93,9 +89,9 @@ async function hitungRute(startCoords, endCoords, jam) {
     console.log('Response ORS:', ruteData);
 
     if (
-      !ruteData.routes ||
-      !ruteData.routes[0] ||
-      !ruteData.routes[0].geometry ||
+      !ruteData.routes || 
+      !ruteData.routes[0] || 
+      !ruteData.routes[0].geometry || 
       !ruteData.routes[0].geometry.coordinates
     ) {
       alert('Gagal mendapatkan rute. Response error: ' + (ruteData.error || 'Tidak diketahui'));
@@ -104,14 +100,17 @@ async function hitungRute(startCoords, endCoords, jam) {
 
     const waktu = ruteData.routes[0].summary.duration / 60;
 
+    // Hapus rute lama kalau ada
     if (routeLine) {
       map.removeLayer(routeLine);
     }
 
     const routeCoords = ruteData.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
     routeLine = L.polyline(routeCoords, { color: 'blue' }).addTo(map);
+
     map.fitBounds(routeLine.getBounds());
 
+    // Update info estimasi waktu
     let waktuDiv = document.getElementById('waktu');
     if (!waktuDiv) {
       waktuDiv = document.createElement('div');
@@ -120,6 +119,7 @@ async function hitungRute(startCoords, endCoords, jam) {
     }
     waktuDiv.innerHTML = `<p>🕒 Estimasi waktu jalan kaki: ${waktu.toFixed(1)} menit</p>`;
 
+    // Tambah info jam jalan (kamu bisa pakai ini untuk nanti fitur jam aman/dll)
     let jamDiv = document.getElementById('jam-info');
     if (!jamDiv) {
       jamDiv = document.createElement('div');
