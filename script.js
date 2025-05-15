@@ -36,7 +36,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
     // Marker ITB (fixed)
     markerTujuan = L.marker([ITB_COORDS[1], ITB_COORDS[0]])
       .addTo(map)
-      .bindPopup('Tujuan: ITB 🎯')
+      .bindPopup('Tujuan')
       .openPopup();
 
     const infoDiv = document.getElementById('info');
@@ -45,7 +45,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
       <p>Latitude: ${lat.toFixed(5)}</p>
       <p>Longitude: ${lon.toFixed(5)}</p>
       <p>Jam jalan: <b>${jamInput}</b></p>
-      <p>Klik di peta untuk eksplorasi titik lain (tidak mengubah rute)</p>
+      <p>Klik di peta untuk menentukan tujuan</p>
     `;
 
     // Klik di peta → marker eksplorasi (tidak mengubah rute)
