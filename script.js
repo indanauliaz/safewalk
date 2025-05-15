@@ -3,6 +3,9 @@ let markerUser;
 let markerTujuan;
 let routeLine;
 
+// Koordinat ITB (fixed tujuan)
+const ITB_COORDS = [107.6186, -6.8905]; // [lon, lat]
+
 document.getElementById('startBtn').addEventListener('click', () => {
   const jamInput = document.getElementById('jamJalan').value;
   if (!jamInput) {
@@ -21,45 +24,49 @@ document.getElementById('startBtn').addEventListener('click', () => {
     return;
   }
 
-  navigator.geolocation.getCurrentPosition((pos) => {
+  navigator.geolocation.getCurrentPosition(async (pos) => {
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
 
-    // Tampilkan peta
+    // Inisialisasi peta dan marker user
     map = L.map('map').setView([lat, lon], 16);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Marker lokasi user
     markerUser = L.marker([lat, lon]).addTo(map).bindPopup('Kamu di sini 😎').openPopup();
 
-    // Info lokasi user & jam jalan
+    // Marker tujuan ITB (fixed)
+    if (markerTujuan) {
+      map.removeLayer(markerTujuan);
+    }
+    markerTujuan = L.marker([ITB_COORDS[1], ITB_COORDS[0]]).addTo(map).bindPopup('Tujuan ITB 🎯').openPopup();
+
+    // Tampilkan info lokasi user & jam jalan
     const infoDiv = document.getElementById('info');
     infoDiv.innerHTML = `
       <h3>📍 Lokasi Kamu</h3>
       <p>Latitude: ${lat.toFixed(5)}</p>
       <p>Longitude: ${lon.toFixed(5)}</p>
       <p>Jam jalan: <b>${jamInput}</b></p>
-      <p>Klik di peta untuk pilih tujuan jalan kaki</p>
+      <p>Klik di peta untuk pilih tujuan (tidak mengubah rute sebenarnya)</p>
     `;
 
-    // Event klik peta untuk set tujuan
-    map.on('click', async function(e) {
+    // Pas klik peta, buat marker tujuan baru (tidak ubah rute)
+    map.on('click', (e) => {
       const tujuanLat = e.latlng.lat;
       const tujuanLon = e.latlng.lng;
 
-      // Hapus marker tujuan lama kalau ada
       if (markerTujuan) {
         map.removeLayer(markerTujuan);
       }
 
-      // Tambah marker tujuan
-      markerTujuan = L.marker([tujuanLat, tujuanLon]).addTo(map).bindPopup('Tujuan 🎯').openPopup();
-
-      // Hitung dan tampilkan rute
-      await hitungRute([lon, lat], [tujuanLon, tujuanLat], jamInput);
+      // Marker tujuan klik user (formalitas)
+      markerTujuan = L.marker([tujuanLat, tujuanLon]).addTo(map).bindPopup('Tujuan pilihanmu 🎯').openPopup();
     });
+
+    // Hitung dan tampilkan rute & estimasi waktu ke ITB
+    await hitungRute([lon, lat], ITB_COORDS, jamInput);
 
   }, (err) => {
     alert('Gagal mendapatkan lokasi: ' + err.message);
@@ -117,9 +124,9 @@ async function hitungRute(startCoords, endCoords, jam) {
       waktuDiv.id = 'waktu';
       infoDiv.appendChild(waktuDiv);
     }
-    waktuDiv.innerHTML = `<p>🕒 Estimasi waktu jalan kaki: ${waktu.toFixed(1)} menit</p>`;
+    waktuDiv.innerHTML = `<p>🕒 Estimasi waktu jalan kaki ke ITB: ${waktu.toFixed(1)} menit</p>`;
 
-    // Tambah info jam jalan (kamu bisa pakai ini untuk nanti fitur jam aman/dll)
+    // Update info jam jalan
     let jamDiv = document.getElementById('jam-info');
     if (!jamDiv) {
       jamDiv = document.createElement('div');
