@@ -27,3 +27,13 @@ button {
   border-radius: 6px;
   cursor: pointer;
 }
+
+/* Style untuk map, pastikan cukup besar dan jelas */
+#map {
+  width: 90%;
+  max-width: 800px;
+  height: 500px;
+  margin: 20px auto;
+  border-radius: 10px;
+  z-index: 0;
+}
