@@ -16,13 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <p><i>Klik lokasi tujuan di peta</i></p>
           `;
 
-          // Hapus map sebelumnya jika ada
           if (window.map) {
             window.map.remove();
-            document.getElementById('map').innerHTML = ''; // Reset kontainer
           }
 
-          // Pastikan map container sudah ada di DOM
+          // Buat peta langsung tanpa delay
           const map = L.map('map').setView([lat, lon], 16);
           window.map = map;
 
