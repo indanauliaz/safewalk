@@ -15,7 +15,7 @@ body {
   box-shadow: 0 0 15px rgba(0,0,0,0.1);
   margin-top: 20px;
   width: 90%;
-  max-width: 600px;
+  max-width: 800px;
 }
 
 button {
@@ -28,12 +28,11 @@ button {
   cursor: pointer;
 }
 
-/* Style untuk map, pastikan cukup besar dan jelas */
+/* Map size diperbesar dan tetap responsif */
 #map {
-  width: 90%;
-  max-width: 800px;
+  width: 100%;
   height: 500px;
-  margin: 20px auto;
+  margin-top: 20px;
   border-radius: 10px;
   z-index: 0;
 }
