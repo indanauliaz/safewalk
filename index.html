@@ -7,9 +7,41 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
     #map {
-      height: 300px;
+      height: 400px;
       margin-top: 20px;
       border-radius: 10px;
+      display: none; /* sembunyi dulu */
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      text-align: center;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      font-family: sans-serif;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    input {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    #info {
+      margin-top: 15px;
     }
   </style>
 </head>
@@ -17,7 +49,7 @@
   <div class="container">
     <h1>Safewalk</h1>
     <p>Aplikasi teman jalan yang aman dan nyaman</p>
-    <input type="text" id="alamatTujuan" placeholder="Masukkan alamat tujuan" />
+    <input type="time" id="jamJalan" />
     <button id="startBtn">Mulai Safewalk</button>
     <div id="info"></div>
   </div>
