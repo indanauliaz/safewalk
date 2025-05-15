@@ -69,27 +69,30 @@ async function hitungRute(startCoords, endCoords) {
     });
 
     const ruteData = await ruteRes.json();
+    console.log('Response dari ORS:', ruteData);  // <-- cek response
 
-    if (!ruteData.routes || !ruteData.routes[0]) {
-      alert('Gagal mendapatkan rute.');
+    if (
+      !ruteData.routes || 
+      !ruteData.routes[0] || 
+      !ruteData.routes[0].geometry || 
+      !ruteData.routes[0].geometry.coordinates
+    ) {
+      alert('Gagal mendapatkan rute. Response error: ' + (ruteData.error || 'Tidak diketahui'));
       return;
     }
 
     const waktu = ruteData.routes[0].summary.duration / 60;
 
-    // Hapus route line lama kalau ada
+    // hapus routeLine lama kalau ada
     if (routeLine) {
       map.removeLayer(routeLine);
     }
 
-    // Gambar rute baru
     const routeCoords = ruteData.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
     routeLine = L.polyline(routeCoords, { color: 'blue' }).addTo(map);
 
-    // Zoom peta ke rute
     map.fitBounds(routeLine.getBounds());
 
-    // Update info estimasi waktu
     let waktuDiv = document.getElementById('waktu');
     if (!waktuDiv) {
       waktuDiv = document.createElement('div');
