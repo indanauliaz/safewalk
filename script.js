@@ -4,7 +4,7 @@ let markerTujuan;
 let routeLine;
 
 // Koordinat ITB (fixed tujuan)
-const ITB_COORDS = [107.6186, -6.8905]; // [lon, lat]
+const ITB_COORDS = [107.6108, -6.8915]; // [lon, lat]
 
 document.getElementById('startBtn').addEventListener('click', () => {
   const jamInput = document.getElementById('jamJalan').value;
@@ -49,7 +49,7 @@ document.getElementById('startBtn').addEventListener('click', () => {
       <p>Latitude: ${lat.toFixed(5)}</p>
       <p>Longitude: ${lon.toFixed(5)}</p>
       <p>Jam jalan: <b>${jamInput}</b></p>
-      <p>Klik di peta untuk pilih tujuan (tidak mengubah rute sebenarnya)</p>
+      <p>Klik di peta untuk pilih tujuan</p>
     `;
 
     // Pas klik peta, buat marker tujuan baru (tidak ubah rute)
@@ -124,7 +124,7 @@ async function hitungRute(startCoords, endCoords, jam) {
       waktuDiv.id = 'waktu';
       infoDiv.appendChild(waktuDiv);
     }
-    waktuDiv.innerHTML = `<p>🕒 Estimasi waktu jalan kaki ke ITB: ${waktu.toFixed(1)} menit</p>`;
+    waktuDiv.innerHTML = `<p>🕒 Estimasi waktu jalan kaki: ${waktu.toFixed(1)} menit</p>`;
 
     // Update info jam jalan
     let jamDiv = document.getElementById('jam-info');
